@@ -1,0 +1,72 @@
+/* styles.css */
+body {
+  margin: 0;
+  font-family: sans-serif;
+  display: flex;
+}
+
+.sidebar {
+  width: 200px;
+  height: 100vh;
+  background: #f0f0f0;
+  padding: 15px;
+  box-sizing: border-box;
+}
+
+#editor-container {
+  flex-grow: 1;
+  padding: 20px;
+}
+
+#editorjs {
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  padding: 20px;
+  height: calc(100vh - 100px);
+}
+
+#new-note {
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 10px;
+}
+
+#note-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+#note-list li {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px;
+  cursor: pointer;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+#note-list li:hover {
+  background: #e0e0e0;
+}
+
+#note-list li.active {
+  background: #666;
+  color: white;
+}
+
+.delete-note {
+  background: transparent;
+  border: none;
+  color: #999;
+  cursor: pointer;
+  display: none; /* Hidden by default */
+}
+
+#note-list li:hover .delete-note {
+  display: inline-block; /* Show on hover */
+}
+
+.delete-note:hover {
+  color: #f00;
+}

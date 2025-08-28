@@ -1,0 +1,24 @@
+name: Create Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  build-and-release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Package extension
+        run: |
+          zip notable-extension.zip manifest.json index.html app.js styles.css background.js
+
+      - name: Create Release
+        uses: softprops/action-gh-release@v1
+        with:
+          files: notable-extension.zip
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
