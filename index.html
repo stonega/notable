@@ -1,18 +1,30 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Notable</title>
   <link rel="stylesheet" href="styles.css">
-  <script src="editor.js"></script>
 </head>
 <body>
   <div id="sidebar" class="sidebar">
-    <button id="new-note">New Note</button>
-    <ul id="note-list"></ul>
+    <div class="sidebar-header">
+      <button id="new-note" aria-label="Create new note">
+        New Note
+      </button>
+    </div>
+    <div class="sidebar-content">
+      <ul id="note-list" role="list" aria-label="Notes list"></ul>
+    </div>
   </div>
+  
   <div id="editor-container">
-    <div id="editorjs"></div>
+    <div id="editorjs" role="main" aria-label="Note editor"></div>
   </div>
+  
+  <script src="header.js"></script>
+  <script src="paragraph.js"></script>
+  <script src="editor.js"></script>
   <script src="app.js"></script>
 </body>
 </html>
