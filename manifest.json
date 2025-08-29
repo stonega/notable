@@ -2,7 +2,7 @@
   "manifest_version": 3,
   "name": "Notable",
   "version": "1.0",
-  "description": "A simple and fullscreen notebook on your new tab.",
+  "description": "New tab, new note.",
   "chrome_url_overrides": {
     "newtab": "index.html"
   },

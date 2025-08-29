@@ -9,8 +9,32 @@ document.addEventListener('DOMContentLoaded', () => {
       saveActiveNote();
     },
     tools: {
-      header: Header,
-      paragraph: Paragraph,
+      header: {
+        class: Header,
+        config: {
+          placeholder: 'Enter a header',
+          levels: [2, 3, 4],
+          defaultLevel: 3
+        }
+      },
+      code: CodeTool,
+      quote: Quote,
+      paragraph: {
+        class: Paragraph,
+        inlineToolbar: true,
+      },
+      image: SimpleImage,
+      checklist: {
+        class: Checklist,
+        inlineToolbar: true,
+      },
+      List: {
+        class: EditorjsList,
+        inlineToolbar: true,
+        config: {
+          defaultStyle: 'unordered'
+        },
+      },
     }
   });
 
@@ -19,6 +43,54 @@ document.addEventListener('DOMContentLoaded', () => {
 
   let notes = [];
   let activeNoteId = null;
+  let isUpdatingFromStorage = false; // Flag to prevent infinite loops
+
+  // Add storage change listener for instant sync
+  chrome.storage.onChanged.addListener((changes, namespace) => {
+    if (namespace === 'local' && !isUpdatingFromStorage) {
+      handleStorageChanges(changes);
+    }
+  });
+
+  async function handleStorageChanges(changes) {
+    if (changes.notes) {
+      // Notes were updated in another tab
+      const oldNotes = notes;
+      notes = changes.notes.newValue || [];
+      
+      // Check if the current active note was updated
+      if (activeNoteId) {
+        const currentNote = notes.find(n => n.id === activeNoteId);
+        const oldNote = oldNotes.find(n => n.id === activeNoteId);
+        
+        if (currentNote && oldNote && 
+            JSON.stringify(currentNote.data) !== JSON.stringify(oldNote.data)) {
+          // The active note was updated in another tab, reload it
+          isUpdatingFromStorage = true;
+          try {
+            await editor.isReady;
+            if (currentNote.data && Object.keys(currentNote.data).length > 0) {
+              await editor.render(currentNote.data);
+            } else {
+              await editor.clear();
+            }
+          } catch (error) {
+            console.error('Error syncing note from storage:', error);
+          } finally {
+            isUpdatingFromStorage = false;
+          }
+        }
+      }
+      
+      // Always update the note list to reflect changes
+      renderNoteList();
+    }
+    
+    if (changes.windowActiveNotes) {
+      // Window active notes were updated, but we don't need to do anything
+      // as this is per-window state
+    }
+  }
 
   async function initialize() {
     const window = await chrome.windows.getCurrent();
@@ -149,9 +221,10 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   async function saveActiveNote() {
-    if (!activeNoteId) return;
+    if (!activeNoteId || isUpdatingFromStorage) return;
 
     try {
+      isUpdatingFromStorage = true;
       const outputData = await editor.save();
       const noteIndex = notes.findIndex(n => n.id === activeNoteId);
       if (noteIndex !== -1) {
@@ -175,78 +248,78 @@ document.addEventListener('DOMContentLoaded', () => {
         }
       }
     } catch (error) {
-      console.error('Saving failed: ', error);
+      console.error('Error saving note:', error);
+    } finally {
+      isUpdatingFromStorage = false;
     }
   }
 
-  async function createNewNote(isForNewWindow = false) {
-    if (!isForNewWindow) {
-      await saveActiveNote();
-    }
+  async function createNewNote(setAsActive = false) {
+    if (isUpdatingFromStorage) return;
     
-    const newNote = {
-      id: `note-${Date.now()}`,
-      data: { blocks: [] },
-      createdAt: new Date().toISOString(),
-    };
-    
-    notes.unshift(newNote);
-    activeNoteId = newNote.id;
+    isUpdatingFromStorage = true;
+    try {
+      const newNote = {
+        id: Date.now().toString(),
+        data: {},
+        createdAt: new Date().toISOString()
+      };
 
-    const data = await chrome.storage.local.get('windowActiveNotes');
-    const windowActiveNotes = data.windowActiveNotes || {};
-    windowActiveNotes[currentWindowId] = activeNoteId;
+      notes.unshift(newNote);
 
-    await chrome.storage.local.set({ notes, windowActiveNotes });
+      const windowActiveNotes = setAsActive ? 
+        { ...((await chrome.storage.local.get('windowActiveNotes')).windowActiveNotes || {}), [currentWindowId]: newNote.id } :
+        (await chrome.storage.local.get('windowActiveNotes')).windowActiveNotes || {};
 
-    await loadNote(activeNoteId);
-    renderNoteList();
-    
-    // Focus the editor after creating a new note
-    setTimeout(() => {
-      const editorElement = document.querySelector('#editorjs [contenteditable]');
-      if (editorElement) {
-        editorElement.focus();
+      await chrome.storage.local.set({ notes, windowActiveNotes });
+
+      if (setAsActive) {
+        activeNoteId = newNote.id;
+        await loadNote(activeNoteId);
       }
-    }, 100);
+
+      renderNoteList();
+    } finally {
+      isUpdatingFromStorage = false;
+    }
   }
 
-  async function deleteNote(noteIdToDelete) {
-    // Add confirmation for delete
-    const noteToDelete = notes.find(n => n.id === noteIdToDelete);
-    const noteTitle = getNoteTitle(noteToDelete);
+  async function deleteNote(noteId) {
+    if (isUpdatingFromStorage) return;
     
-    if (!confirm(`Are you sure you want to delete "${noteTitle}"?`)) {
-      return;
-    }
-    
-    notes = notes.filter(n => n.id !== noteIdToDelete);
+    isUpdatingFromStorage = true;
+    try {
+      const noteIndex = notes.findIndex(n => n.id === noteId);
+      if (noteIndex === -1) return;
 
-    // Find which windows were pointing to this note
-    const data = await chrome.storage.local.get('windowActiveNotes');
-    const windowActiveNotes = data.windowActiveNotes || {};
-    const affectedWindows = [];
-    for (const windowId in windowActiveNotes) {
-      if (windowActiveNotes[windowId] === noteIdToDelete) {
-        affectedWindows.push(windowId);
-        delete windowActiveNotes[windowId];
+      // Remove the note
+      notes.splice(noteIndex, 1);
+
+      // Clean up windowActiveNotes for all windows that had this note active
+      const data = await chrome.storage.local.get('windowActiveNotes');
+      const windowActiveNotes = data.windowActiveNotes || {};
+      
+      Object.keys(windowActiveNotes).forEach(windowId => {
+        if (windowActiveNotes[windowId] === noteId) {
+          delete windowActiveNotes[windowId];
+        }
+      });
+
+      await chrome.storage.local.set({ notes, windowActiveNotes });
+
+      // If this was the active note in current window, create a new one
+      if (activeNoteId === noteId) {
+        if (notes.length > 0) {
+          await loadNote(notes[0].id);
+        } else {
+          await createNewNote(true);
+        }
       }
-    }
 
-    await chrome.storage.local.set({ notes, windowActiveNotes });
-
-    // If the deleted note was active in the current window, load a new one.
-    if (activeNoteId === noteIdToDelete) {
-      if (notes.length > 0) {
-        // Find a new note to make active, preferably one not active in another window
-        const otherActiveNotes = Object.values(windowActiveNotes);
-        const newActiveNote = notes.find(n => !otherActiveNotes.includes(n.id)) || notes[0];
-        await switchNote(newActiveNote.id);
-      } else {
-        await createNewNote(true);
-      }
+      renderNoteList();
+    } finally {
+      isUpdatingFromStorage = false;
     }
-    renderNoteList();
   }
 
   async function switchNote(noteId) {
