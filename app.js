@@ -8,9 +8,19 @@ document.addEventListener('DOMContentLoaded', () => {
             saveActiveNote();
         },
         tools: {
-            header: { class: 'Header', inlineToolbar: ['link'] },
-            list: { class: 'List', inlineToolbar: true }
-        },
+            header: {
+                class: 'Header',
+                inlineToolbar: ['link']
+            },
+            list: {
+                class: 'List',
+                inlineToolbar: true
+            },
+            paragraph: {
+                class: 'Paragraph',
+                inlineToolbar: true,
+            },
+        }
     });
 
     const noteList = document.getElementById('note-list');
