@@ -57,7 +57,7 @@ body {
 .sidebar {
   width: 280px;
   height: 100vh;
-  background: var(--bg-primary);
+  background: var(--bg-secondary);
   border-right: 1px solid var(--border-color);
   display: flex;
   flex-direction: column;
@@ -214,7 +214,7 @@ body {
   flex-direction: column;
   align-items: center;
   padding: 20px;
-  background: var(--bg-secondary);
+  background: var(--bg-primary);
   min-width: 0;
 }
 
@@ -234,7 +234,6 @@ body {
 
 #editorjs:focus-within {
   border-color: var(--border-focus);
-  box-shadow: 0 0 0 2px rgba(0, 0, 0, 0.05);
 }
 
 /* Clean scrollbar */
