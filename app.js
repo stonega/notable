@@ -120,11 +120,14 @@ document.addEventListener("DOMContentLoaded", () => {
 		const windowActiveNotes = data.windowActiveNotes || {};
 		activeNoteId = windowActiveNotes[currentWindowId];
 
-		if (!activeNoteId || !notes.find((n) => n.id === activeNoteId)) {
-			// This is a new window or its note was deleted.
-			await createNewNote(true); // create a new note for this window
-		} else {
+		if (activeNoteId && notes.find((n) => n.id === activeNoteId)) {
 			await loadNote(activeNoteId);
+		} else if (notes.length > 0) {
+			// Load the first available note instead of creating a new one
+			await loadNote(notes[0].id);
+		} else {
+			// Only create a new note if no notes exist at all
+			await createNewNote(true);
 		}
 
 		renderNoteList();
