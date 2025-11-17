@@ -291,7 +291,7 @@ body {
 }
 
 #editorjs {
-	background: var(--bg-primary);
+	background: var(--bg-secondary);
 	border-radius: var(--radius-lg);
 	padding: 40px;
 	flex: 1;
@@ -300,7 +300,7 @@ body {
 	font-size: 18px;
 	line-height: 1.6;
 	width: 100%;
-	max-width: 800px;
+	max-width: 1200px;
 	margin: 0 auto;
 }
 
