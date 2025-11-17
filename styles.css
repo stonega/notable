@@ -2,9 +2,9 @@
 
 /* CSS Variables for consistent theming */
 :root {
-	--primary-color: #000000;
+	--primary-color: #0a9d95;
 	--primary-hover: #333333;
-	--primary-light: #f5f5f5;
+	--primary-light: #a7c0bb;
 	--secondary-color: #666666;
 	--success-color: #22c55e;
 	--danger-color: #ef4444;
@@ -147,13 +147,12 @@ body {
 }
 
 #note-list li:hover {
-	background: var(--bg-hover);
+	background: var(--primary-light);
 }
 
 #note-list li.active {
 	background: var(--primary-light);
-	color: var(--secondary-color);
-	font-weight: 500;
+	color: var(--text-primary);
 }
 
 #note-list li.active::before {
@@ -163,7 +162,7 @@ body {
 	top: 50%;
 	transform: translateY(-50%);
 	width: 3px;
-	height: 16px;
+	height: 20px;
 	background: var(--primary-color);
 	border-radius: 8px;
 }
@@ -375,18 +374,14 @@ body {
 	}
 }
 
-.note-item-enter {
-	animation: slideIn 0.15s ease-out;
-}
-
 .fade-in {
 	animation: fadeIn 0.2s ease-out;
 }
 
 /* Focus States */
 *:focus {
-	outline: 2px solid var(--primary-color);
-	outline-offset: 1px;
+	outline: 1px solid var(--primary-light);
+	outline-offset: 0px;
 }
 
 button:focus {

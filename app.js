@@ -220,10 +220,6 @@ document.addEventListener("DOMContentLoaded", () => {
 				}
 			});
 
-			// Add entrance animation with delay
-			li.classList.add("note-item-enter");
-			li.style.animationDelay = `${index * 0.05}s`;
-
 			noteList.appendChild(li);
 		});
 	}
