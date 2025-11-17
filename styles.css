@@ -34,6 +34,7 @@
 
 	--transition: all 0.2s ease;
 	--transition-fast: 0.1s ease;
+	--sidebar-width: 280px;
 }
 
 /* Base styles */
@@ -69,7 +70,7 @@ a {
 
 /* Enhanced Sidebar */
 .sidebar {
-	width: 280px;
+	width: var(--sidebar-width);
 	height: 100vh;
 	background: var(--bg-secondary);
 	border-right: 1px solid var(--border-color);
@@ -194,7 +195,7 @@ a {
 .pin-note {
 	background: transparent;
 	border: none;
-	color: var(--text-muted);
+	color: var(--text-primary);
 	cursor: pointer;
 	opacity: 0;
 	transition: var(--transition);
@@ -203,8 +204,8 @@ a {
 	display: flex;
 	align-items: center;
 	justify-content: center;
-	width: 20px;
-	height: 20px;
+	width: 26px;
+	height: 26px;
 	font-size: 12px;
 	margin-right: 4px;
 }
@@ -291,18 +292,31 @@ a {
 	color: var(--text-inverse);
 }
 
-/* Clean Editor Container - Centered */
+/* Clean Editor Container - Centered with Split View Support */
 #editor-container {
 	flex: 1;
 	display: flex;
-	flex-direction: column;
-	align-items: center;
+	flex-direction: row;
+	gap: 20px;
 	padding: 20px;
 	background: var(--bg-primary);
 	min-width: 0;
+	align-items: stretch;
 }
 
-#editorjs {
+.editor-wrapper {
+	flex: 1;
+	display: flex;
+	flex-direction: column;
+	min-width: 0;
+}
+
+#main-editor {
+	transition: var(--transition);
+}
+
+#editorjs,
+#editorjs-pinned {
 	background: var(--bg-secondary);
 	border-radius: var(--radius-lg);
 	padding: 40px;
@@ -312,12 +326,52 @@ a {
 	font-size: 24px;
 	line-height: 1.6;
 	width: 100%;
-	max-width: 900px;
+	max-width: calc(100vw - 40px);
 	margin: 0 auto;
 }
 
-#editorjs:focus-within {
+#editorjs:focus-within,
+#editorjs-pinned:focus-within {
 	border-color: var(--border-focus);
+}
+
+/* Pinned Editor Styles */
+.pinned-view {
+	display: none;
+	margin-left: 0;
+}
+
+.pinned-view.active {
+	display: flex;
+}
+
+.pinned-header {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	padding: 12px 20px;
+	background: var(--bg-secondary);
+	border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+	margin-bottom: 10px;
+	border: 1px solid var(--border-color);
+}
+
+.pinned-title {
+	font-size: 1rem;
+	font-weight: 600;
+	color: var(--primary-color);
+	display: flex;
+	align-items: center;
+	gap: 8px;
+}
+
+/* When pinned view is active, adjust main editor */
+#editor-container:has(.pinned-view.active) #main-editor {
+	max-width: 50%;
+}
+
+#editor-container:has(.pinned-view.active) .pinned-view {
+	max-width: 50%;
 }
 
 /* Clean scrollbar */
@@ -346,21 +400,38 @@ a {
 /* Responsive Design */
 @media (max-width: 768px) {
 	.sidebar {
-		width: 260px;
+		width: var(--sidebar-width);
 	}
 
 	#editor-container {
 		padding: 16px;
+		flex-direction: column;
 	}
 
-	#editorjs {
+	#editorjs,
+	#editorjs-pinned {
 		padding: 24px;
 		max-width: none;
+	}
+
+	.pinned-view {
+		border-left: none;
+		border-top: 2px solid var(--primary-color);
+		padding-left: 0;
+		padding-top: 20px;
+		margin-left: 0;
+		margin-top: 20px;
+	}
+
+	#editor-container:has(.pinned-view.active) #main-editor,
+	#editor-container:has(.pinned-view.active) .pinned-view {
+		max-width: 100%;
 	}
 }
 
 @media (max-width: 1200px) {
-	#editorjs {
+	#editorjs,
+	#editorjs-pinned {
 		max-width: 700px;
 	}
 }

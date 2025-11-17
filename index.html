@@ -19,7 +19,12 @@
         </div>
 
         <div id="editor-container">
-            <div id="editorjs" role="main" aria-label="Note editor"></div>
+            <div id="main-editor" class="editor-wrapper">
+                <div id="editorjs" role="main" aria-label="Note editor"></div>
+            </div>
+            <div id="pinned-editor" class="editor-wrapper pinned-view" style="display: none;">
+                <div id="editorjs-pinned" role="complementary" aria-label="Pinned note editor"></div>
+            </div>
         </div>
 
         <script src="tools/header.js"></script>
