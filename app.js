@@ -28,6 +28,12 @@ document.addEventListener("DOMContentLoaded", () => {
 				class: Checklist,
 				inlineToolbar: true,
 			},
+			linkTool: {
+				class: LinkTool,
+				config: {
+					endpoint: 'https://solitary-art-95e7.xijieyin.workers.dev',
+				}
+			},
 			List: {
 				class: EditorjsList,
 				inlineToolbar: true,

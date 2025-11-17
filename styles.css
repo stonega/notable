@@ -55,6 +55,18 @@ body {
 	font-size: 18px;
 }
 
+a {
+	color: var(--primary-color);
+	text-decoration: none;
+	transition: var(--transition);
+	&:hover {
+		color: var(--primary-color);
+	}
+	&:active {
+		transform: scale(0.98);
+	}
+}
+
 /* Enhanced Sidebar */
 .sidebar {
 	width: 280px;
@@ -131,7 +143,7 @@ body {
 	margin: 0;
 	display: flex;
 	flex-direction: column;
-	gap: 2px;
+	gap: 4px;
 }
 
 #note-list li {
@@ -161,7 +173,7 @@ body {
 	left: 0;
 	top: 50%;
 	transform: translateY(-50%);
-	width: 3px;
+	width: 4px;
 	height: 20px;
 	background: var(--primary-color);
 	border-radius: 8px;
@@ -297,10 +309,10 @@ body {
 	flex: 1;
 	transition: var(--transition);
 	overflow-y: auto;
-	font-size: 18px;
+	font-size: 24px;
 	line-height: 1.6;
 	width: 100%;
-	max-width: 1200px;
+	max-width: 900px;
 	margin: 0 auto;
 }
 
@@ -380,8 +392,8 @@ body {
 
 /* Focus States */
 *:focus {
-	outline: 1px solid var(--primary-light);
-	outline-offset: 0px;
+	outline: 2px solid var(--primary-light);
+	outline-offset: 1px;
 }
 
 button:focus {
