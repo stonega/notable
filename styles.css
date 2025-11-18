@@ -78,7 +78,7 @@ body {
 	font-family:
 		-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue",
 		Arial, sans-serif;
-	background: var(--bg-secondary);
+	background: var(--bg-tertiary);
 	color: var(--text-primary);
 	display: flex;
 	height: 100vh;
@@ -343,7 +343,7 @@ a {
 	flex-direction: row;
 	gap: 20px;
 	padding: 20px;
-	background: var(--bg-primary);
+	background: var(--bg-secondary);
 	min-width: 0;
 	align-items: stretch;
 	box-shadow: var(--shadow-sm);
@@ -363,7 +363,7 @@ a {
 	align-items: center;
 	gap: 8px;
 	padding: 8px 12px;
-	background: var(--bg-secondary);
+	background: var(--bg-primary);
 	border-radius: var(--radius-lg) var(--radius-lg) 0 0;
 	margin-bottom: 0;
 }
@@ -371,7 +371,7 @@ a {
 .action-btn {
 	background: transparent;
 	border: none;
-	color: var(--text-secondary);
+	color: var(--text-primary);
 	cursor: pointer;
 	padding: 6px;
 	border-radius: var(--radius-md);
@@ -407,7 +407,7 @@ a {
 
 #editorjs,
 #editorjs-pinned {
-	background: var(--bg-secondary);
+	background: var(--bg-primary);
 	border-radius: 0 0 var(--radius-lg) var(--radius-lg);
 	padding: 40px;
 	flex: 1;
