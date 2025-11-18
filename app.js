@@ -96,7 +96,7 @@ document.addEventListener("DOMContentLoaded", () => {
 	// Pinned editor instance
 	const pinnedEditor = new EditorJS({
 		holder: "editorjs-pinned",
-		placeholder: "Pinned note will appear here...",
+		placeholder: "Type / to add...",
 		onChange: () => {
 			savePinnedNote();
 		},
