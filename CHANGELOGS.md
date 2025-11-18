@@ -4,3 +4,6 @@
 
 ## v1.5.0
 - Support dark theme.
+
+## v1.6.0
+- Minor style fixes.
