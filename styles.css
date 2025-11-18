@@ -368,11 +368,6 @@ a {
 	margin-bottom: 0;
 }
 
-/* Hide pin button in main editor (active note) */
-#main-editor .editor-action-bar #toggle-pin {
-	display: none;
-}
-
 /* Move pin button to left in pinned editor */
 #pinned-editor .editor-action-bar {
 	justify-content: space-between;

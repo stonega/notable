@@ -505,6 +505,11 @@ document.addEventListener("DOMContentLoaded", () => {
 				// Update pin button state
 				updatePinButton(togglePinBtn, note.pinned);
 
+				// If the active note is the same as the pinned note, hide the split view
+				if (pinnedNoteId === noteId) {
+					await hidePinnedView();
+				}
+
 				renderNoteList();
 			} catch (error) {
 				console.error("Error loading note:", error);
@@ -584,6 +589,12 @@ document.addEventListener("DOMContentLoaded", () => {
 	}
 
 	async function loadPinnedNote(noteId) {
+		// Don't load in split view if it's the same as the active note
+		if (noteId === activeNoteId) {
+			await hidePinnedView();
+			return;
+		}
+		
 		const note = notes.find((n) => n.id === noteId);
 		if (note) {
 			try {
