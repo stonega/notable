@@ -3,9 +3,9 @@
 /* CSS Variables for consistent theming */
 :root {
 	--primary-color: #0a9d95;
-	--primary-hover: #333333;
-	--primary-light: #a7c0bb;
-	--secondary-color: #666666;
+	--primary-hover: #43afa6;
+	--primary-light: #63a587;
+	--secondary-color: #a688d7;
 	--success-color: #22c55e;
 	--danger-color: #ef4444;
 	--danger-hover: #dc2626;
@@ -20,7 +20,7 @@
 	--text-muted: #999999;
 	--text-inverse: #ffffff;
 
-	--border-color: #e5e5e5;
+	--border-color: #f5f5f5;
 	--border-hover: #d0d0d0;
 	--border-focus: var(--primary-color);
 
@@ -30,7 +30,7 @@
 
 	--radius-sm: 4px;
 	--radius-md: 6px;
-	--radius-lg: 8px;
+	--radius-lg: 10px;
 
 	--transition: all 0.2s ease;
 	--transition-fast: 0.1s ease;
@@ -81,7 +81,8 @@ a {
 }
 
 .sidebar-header {
-	padding: 20px;
+	padding: 12px;
+	margin-top: 6px;
 	background: var(--bg-secondary);
 }
 
@@ -110,6 +111,7 @@ a {
 #new-note {
 	width: 100%;
 	padding: 12px 16px;
+	background: var(--primary-color);
 	color: var(--text-primary);
 	border: none;
 	border-radius: var(--radius-lg);
@@ -124,7 +126,7 @@ a {
 }
 
 #new-note:hover {
-	background: var(--bg-hover);
+	background: var(--primary-hover);
 }
 
 #new-note:active {
@@ -230,24 +232,7 @@ a {
 
 /* Pinned Note Indicator */
 #note-list li.pinned {
-	background: var(--bg-hover);
-	border: 1px solid var(--border-color);
-}
-
-#note-list li.pinned .note-title {
-	font-weight: 500;
-}
-
-#note-list li.pinned::after {
-	content: "";
-	position: absolute;
-	right: 8px;
-	top: 8px;
-	width: 6px;
-	height: 6px;
-	background: var(--primary-color);
-	border-radius: 50%;
-	opacity: 0.6;
+	display: none;
 }
 
 /* Note Actions Container */
@@ -271,7 +256,7 @@ a {
 .delete-note {
 	background: transparent;
 	border: none;
-	color: var(--text-muted);
+	color: var(--text-primary);
 	cursor: pointer;
 	transition: var(--transition);
 	padding: 4px;
@@ -302,6 +287,7 @@ a {
 	background: var(--bg-primary);
 	min-width: 0;
 	align-items: stretch;
+	box-shadow: var(--shadow-sm);
 }
 
 .editor-wrapper {
@@ -311,6 +297,51 @@ a {
 	min-width: 0;
 }
 
+/* Editor Action Bar */
+.editor-action-bar {
+	display: flex;
+	justify-content: flex-end;
+	align-items: center;
+	gap: 8px;
+	padding: 8px 12px;
+	background: var(--bg-secondary);
+	border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+	margin-bottom: 0;
+}
+
+.action-btn {
+	background: transparent;
+	border: none;
+	color: var(--text-secondary);
+	cursor: pointer;
+	padding: 6px;
+	border-radius: var(--radius-md);
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 32px;
+	height: 32px;
+	transition: var(--transition);
+}
+
+.action-btn svg {
+	width: 20px;
+	height: 20px;
+}
+
+.action-btn:hover {
+	background: var(--bg-hover);
+	color: var(--text-primary);
+}
+
+.action-btn.pinned {
+	color: var(--primary-color);
+}
+
+.action-btn.pinned:hover {
+	background: var(--primary-light);
+}
+
 #main-editor {
 	transition: var(--transition);
 }
@@ -318,7 +349,7 @@ a {
 #editorjs,
 #editorjs-pinned {
 	background: var(--bg-secondary);
-	border-radius: var(--radius-lg);
+	border-radius: 0 0 var(--radius-lg) var(--radius-lg);
 	padding: 40px;
 	flex: 1;
 	transition: var(--transition);
@@ -372,6 +403,11 @@ a {
 
 #editor-container:has(.pinned-view.active) .pinned-view {
 	max-width: 50%;
+}
+
+.link-tool__input {
+	border-radius: var(--radius-md);
+	background-color: var(--bg-primary);
 }
 
 /* Clean scrollbar */

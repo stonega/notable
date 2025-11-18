@@ -39,6 +39,13 @@ document.addEventListener("DOMContentLoaded", () => {
 		return `<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24"><g fill="none" fill-rule="evenodd"><path d="m12.593 23.258l-.011.002l-.071.035l-.02.004l-.014-.004l-.071-.035q-.016-.005-.024.005l-.004.01l-.017.428l.005.02l.01.013l.104.074l.015.004l.012-.004l.104-.074l.012-.016l.004-.017l-.017-.427q-.004-.016-.017-.018m.265-.113l-.013.002l-.185.093l-.01.01l-.003.011l.018.43l.005.012l.008.007l.201.093q.019.005.029-.008l.004-.014l-.034-.614q-.005-.018-.02-.022m-.715.002a.02.02 0 0 0-.027.006l-.006.014l-.034.614q.001.018.017.024l.015-.002l.201-.093l.01-.008l.004-.011l.017-.43l-.003-.012l-.01-.01z"/><path fill="currentColor" d="M16.735 2.835a2 2 0 0 0-2.615-.186l-2.913 2.185a9 9 0 0 1-4.127 1.71l-2.177.31c-.73.105-1.265.891-.913 1.662c.331.723 1.385 2.629 4.36 5.72l-4.178 4.178a1 1 0 1 0 1.414 1.414l4.178-4.178c3.091 2.975 4.997 4.029 5.72 4.36c.77.352 1.557-.183 1.661-.913l.311-2.177a9 9 0 0 1 1.71-4.127L21.35 9.88a2 2 0 0 0-.186-2.615zM15.32 4.25l4.43 4.43l-2.184 2.914a11 11 0 0 0-2.09 5.044l-.143 1.001c-.98-.624-2.603-1.837-4.869-4.103C8.2 11.27 6.986 9.648 6.362 8.668l1-.143a11 11 0 0 0 5.045-2.09z"/></g></svg>`;
 	}
 
+	function getMarkdownIcon() {
+		return `<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24"><!-- Icon from Solar by 480 Design - https://creativecommons.org/licenses/by/4.0/ --><g fill="none"><path fill="currentColor" d="m15.393 4.054l-.502.557zm3.959 3.563l-.502.557zm2.302 2.537l-.685.305zM3.172 20.828l.53-.53zm17.656 0l-.53-.53zM14 21.25h-4v1.5h4zM2.75 14v-4h-1.5v4zm18.5-.437V14h1.5v-.437zM14.891 4.61l3.959 3.563l1.003-1.115l-3.958-3.563zm7.859 8.952c0-1.689.015-2.758-.41-3.714l-1.371.61c.266.598.281 1.283.281 3.104zm-3.9-5.389c1.353 1.218 1.853 1.688 2.119 2.285l1.37-.61c-.426-.957-1.23-1.66-2.486-2.79zM10.03 2.75c1.582 0 2.179.012 2.71.216l.538-1.4c-.852-.328-1.78-.316-3.248-.316zm5.865.746c-1.086-.977-1.765-1.604-2.617-1.93l-.537 1.4c.532.204.98.592 2.15 1.645zM10 21.25c-1.907 0-3.261-.002-4.29-.14c-1.005-.135-1.585-.389-2.008-.812l-1.06 1.06c.748.75 1.697 1.081 2.869 1.239c1.15.155 2.625.153 4.489.153zM1.25 14c0 1.864-.002 3.338.153 4.489c.158 1.172.49 2.121 1.238 2.87l1.06-1.06c-.422-.424-.676-1.004-.811-2.01c-.138-1.027-.14-2.382-.14-4.289zM14 22.75c1.864 0 3.338.002 4.489-.153c1.172-.158 2.121-.49 2.87-1.238l-1.06-1.06c-.424.422-1.004.676-2.01.811c-1.027.138-2.382.14-4.289.14zM21.25 14c0 1.907-.002 3.262-.14 4.29c-.135 1.005-.389 1.585-.812 2.008l1.06 1.06c.75-.748 1.081-1.697 1.239-2.869c.155-1.15.153-2.625.153-4.489zm-18.5-4c0-1.907.002-3.261.14-4.29c.135-1.005.389-1.585.812-2.008l-1.06-1.06c-.75.748-1.081 1.697-1.239 2.869C1.248 6.661 1.25 8.136 1.25 10zm7.28-8.75c-1.875 0-3.356-.002-4.511.153c-1.177.158-2.129.49-2.878 1.238l1.06 1.06c.424-.422 1.005-.676 2.017-.811c1.033-.138 2.395-.14 4.312-.14z"/><path stroke="currentColor" stroke-width="1.5" d="M13 2.5V5c0 2.357 0 3.536.732 4.268S15.643 10 18 10h4"/><path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M8.5 13.5v5m0 0l2-1.875m-2 1.875l-2-1.875"/></g></svg>`
+	}
+	function getCopyIcon() {
+		return `<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24"><!-- Icon from Solar by 480 Design - https://creativecommons.org/licenses/by/4.0/ --><path fill="currentColor" fill-rule="evenodd" d="M15 1.25h-4.056c-1.838 0-3.294 0-4.433.153c-1.172.158-2.121.49-2.87 1.238c-.748.749-1.08 1.698-1.238 2.87c-.153 1.14-.153 2.595-.153 4.433V16a3.75 3.75 0 0 0 3.166 3.705c.137.764.402 1.416.932 1.947c.602.602 1.36.86 2.26.982c.867.116 1.97.116 3.337.116h3.11c1.367 0 2.47 0 3.337-.116c.9-.122 1.658-.38 2.26-.982s.86-1.36.982-2.26c.116-.867.116-1.97.116-3.337v-5.11c0-1.367 0-2.47-.116-3.337c-.122-.9-.38-1.658-.982-2.26c-.531-.53-1.183-.795-1.947-.932A3.75 3.75 0 0 0 15 1.25m2.13 3.021A2.25 2.25 0 0 0 15 2.75h-4c-1.907 0-3.261.002-4.29.14c-1.005.135-1.585.389-2.008.812S4.025 4.705 3.89 5.71c-.138 1.029-.14 2.383-.14 4.29v6a2.25 2.25 0 0 0 1.521 2.13c-.021-.61-.021-1.3-.021-2.075v-5.11c0-1.367 0-2.47.117-3.337c.12-.9.38-1.658.981-2.26c.602-.602 1.36-.86 2.26-.981c.867-.117 1.97-.117 3.337-.117h3.11c.775 0 1.464 0 2.074.021M7.408 6.41c.277-.277.665-.457 1.4-.556c.754-.101 1.756-.103 3.191-.103h3c1.435 0 2.436.002 3.192.103c.734.099 1.122.28 1.399.556c.277.277.457.665.556 1.4c.101.754.103 1.756.103 3.191v5c0 1.435-.002 2.436-.103 3.192c-.099.734-.28 1.122-.556 1.399c-.277.277-.665.457-1.4.556c-.755.101-1.756.103-3.191.103h-3c-1.435 0-2.437-.002-3.192-.103c-.734-.099-1.122-.28-1.399-.556c-.277-.277-.457-.665-.556-1.4c-.101-.755-.103-1.756-.103-3.191v-5c0-1.435.002-2.437.103-3.192c.099-.734.28-1.122.556-1.399" clip-rule="evenodd"/></svg>`
+	}
+
 	// Configuration for editor tools
 	const editorTools = {
 		header: {
@@ -79,7 +86,7 @@ document.addEventListener("DOMContentLoaded", () => {
 	const editor = new EditorJS({
 		holder: "editorjs",
 		autofocus: true,
-		placeholder: "Start writing your note...",
+		placeholder: "Type / to add...",
 		onChange: () => {
 			saveActiveNote();
 		},
@@ -99,11 +106,139 @@ document.addEventListener("DOMContentLoaded", () => {
 	const noteList = document.getElementById("note-list");
 	const newNoteButton = document.getElementById("new-note");
 	const pinnedEditorContainer = document.getElementById("pinned-editor");
+	const copyMarkdownBtn = document.getElementById("copy-markdown");
+	const downloadMarkdownBtn = document.getElementById("download-markdown");
+	const togglePinBtn = document.getElementById("toggle-pin");
+	const copyMarkdownPinnedBtn = document.getElementById("copy-markdown-pinned");
+	const downloadMarkdownPinnedBtn = document.getElementById("download-markdown-pinned");
+	const togglePinPinnedBtn = document.getElementById("toggle-pin-pinned");
 
 	let notes = [];
 	let activeNoteId = null;
 	let pinnedNoteId = null;
 	let isUpdatingFromStorage = false; // Flag to prevent infinite loops
+
+	// Convert EditorJS data to Markdown
+	function convertToMarkdown(data) {
+		if (!data || !data.blocks) return '';
+		
+		return data.blocks.map(block => {
+			switch (block.type) {
+				case 'header':
+					const level = '#'.repeat(block.data.level || 2);
+					return `${level} ${block.data.text.replace(/<[^>]*>/g, '')}\n`;
+				case 'paragraph':
+					return `${block.data.text.replace(/<[^>]*>/g, '')}\n`;
+				case 'list':
+					const items = block.data.items.map((item, index) => {
+						const cleanText = item.replace(/<[^>]*>/g, '');
+						if (block.data.style === 'ordered') {
+							return `${index + 1}. ${cleanText}`;
+						}
+						return `- ${cleanText}`;
+					}).join('\n');
+					return `${items}\n`;
+				case 'checklist':
+					const checkItems = block.data.items.map(item => {
+						const checked = item.checked ? 'x' : ' ';
+						const cleanText = item.text.replace(/<[^>]*>/g, '');
+						return `- [${checked}] ${cleanText}`;
+					}).join('\n');
+					return `${checkItems}\n`;
+				case 'quote':
+					const quoteText = block.data.text.replace(/<[^>]*>/g, '');
+					const caption = block.data.caption ? `\n*${block.data.caption.replace(/<[^>]*>/g, '')}*` : '';
+					return `> ${quoteText}${caption}\n`;
+				case 'code':
+					return `\`\`\`\n${block.data.code}\n\`\`\`\n`;
+				case 'image':
+					return `![](${block.data.url})\n`;
+				case 'linkTool':
+					const title = block.data.meta?.title || block.data.link;
+					const description = block.data.meta?.description ? `\n${block.data.meta.description}` : '';
+					return `[${title}](${block.data.link})${description}\n`;
+				default:
+					return '';
+			}
+		}).join('\n');
+	}
+
+	// Copy markdown to clipboard
+	async function copyMarkdown(editorInstance) {
+		try {
+			const outputData = await editorInstance.save();
+			const markdown = convertToMarkdown(outputData);
+			await navigator.clipboard.writeText(markdown);
+			
+			// Show feedback
+			const btn = editorInstance === editor ? copyMarkdownBtn : copyMarkdownPinnedBtn;
+			const originalHTML = btn.innerHTML;
+			btn.innerHTML = '<span style="font-size: 14px;">✓</span>';
+			btn.style.color = 'var(--success-color)';
+			
+			setTimeout(() => {
+				btn.innerHTML = originalHTML;
+				btn.style.color = '';
+			}, 1500);
+		} catch (error) {
+			console.error('Error copying markdown:', error);
+		}
+	}
+
+	// Download markdown as file
+	async function downloadMarkdown(editorInstance, noteId) {
+		try {
+			const outputData = await editorInstance.save();
+			const markdown = convertToMarkdown(outputData);
+			
+			// Get note title for filename
+			const note = notes.find(n => n.id === noteId);
+			let filename = 'note.md';
+			if (note) {
+				const noteTitle = getNoteTitle(note);
+				// Clean filename - replace invalid characters
+				filename = noteTitle.replace(/[^a-z0-9]/gi, '_').toLowerCase() + '.md';
+			}
+			
+			// Create blob and download
+			const blob = new Blob([markdown], { type: 'text/markdown' });
+			const url = URL.createObjectURL(blob);
+			const a = document.createElement('a');
+			a.href = url;
+			a.download = filename;
+			document.body.appendChild(a);
+			a.click();
+			document.body.removeChild(a);
+			URL.revokeObjectURL(url);
+			
+			// Show feedback
+			const btn = editorInstance === editor ? downloadMarkdownBtn : downloadMarkdownPinnedBtn;
+			const originalHTML = btn.innerHTML;
+			btn.innerHTML = '<span style="font-size: 14px;">✓</span>';
+			btn.style.color = 'var(--success-color)';
+			
+			setTimeout(() => {
+				btn.innerHTML = originalHTML;
+				btn.style.color = '';
+			}, 1500);
+		} catch (error) {
+			console.error('Error downloading markdown:', error);
+		}
+	}
+
+	// Update pin button state
+	function updatePinButton(button, isPinned) {
+		button.innerHTML = getPinIcon(isPinned);
+		if (isPinned) {
+			button.classList.add('pinned');
+			button.setAttribute('aria-label', 'Unpin note');
+			button.setAttribute('title', 'Unpin note');
+		} else {
+			button.classList.remove('pinned');
+			button.setAttribute('aria-label', 'Pin note');
+			button.setAttribute('title', 'Pin note');
+		}
+	}
 
 	// Add storage change listener for instant sync
 	chrome.storage.onChanged.addListener((changes, namespace) => {
@@ -172,13 +307,19 @@ document.addEventListener("DOMContentLoaded", () => {
 				}
 			}
 
-			// Check if a different note was pinned
-			const newPinnedNote = notes.find((n) => n.pinned);
-			if (newPinnedNote && newPinnedNote.id !== pinnedNoteId) {
+		// Check if a different note was pinned
+		const newPinnedNote = notes.find((n) => n.pinned);
+		if (newPinnedNote && newPinnedNote.id !== pinnedNoteId) {
+			// Only show split view if the pinned note is not the active note
+			if (newPinnedNote.id !== activeNoteId) {
 				await loadPinnedNote(newPinnedNote.id);
-			} else if (!newPinnedNote && pinnedNoteId) {
+			} else {
+				// If the pinned note is the active note, just hide the split view
 				await hidePinnedView();
 			}
+		} else if (!newPinnedNote && pinnedNoteId) {
+			await hidePinnedView();
+		}
 
 			// Always update the note list to reflect changes
 			renderNoteList();
@@ -225,9 +366,9 @@ document.addEventListener("DOMContentLoaded", () => {
 			await createNewNote(true);
 		}
 
-		// Load pinned note if exists
+		// Load pinned note if exists and it's not the active note
 		const pinnedNote = notes.find((n) => n.pinned);
-		if (pinnedNote) {
+		if (pinnedNote && pinnedNote.id !== activeNoteId) {
 			await loadPinnedNote(pinnedNote.id);
 		}
 
@@ -361,6 +502,9 @@ document.addEventListener("DOMContentLoaded", () => {
 				windowActiveNotes[currentWindowId] = activeNoteId;
 				await chrome.storage.local.set({ windowActiveNotes });
 
+				// Update pin button state
+				updatePinButton(togglePinBtn, note.pinned);
+
 				renderNoteList();
 			} catch (error) {
 				console.error("Error loading note:", error);
@@ -450,6 +594,10 @@ document.addEventListener("DOMContentLoaded", () => {
 					await pinnedEditor.clear();
 				}
 				pinnedNoteId = noteId;
+				
+				// Update pin button state (always solid for pinned editor)
+				updatePinButton(togglePinPinnedBtn, true);
+				
 				showPinnedView();
 			} catch (error) {
 				console.error("Error loading pinned note:", error);
@@ -559,7 +707,29 @@ document.addEventListener("DOMContentLoaded", () => {
 	async function switchNote(noteId) {
 		if (noteId === activeNoteId) return;
 		await saveActiveNote();
+		
+		// Check if there's a pinned note
+		const pinnedNote = notes.find((n) => n.pinned);
+		const oldActiveNoteId = activeNoteId;
+		
 		await loadNote(noteId);
+		
+		// Update pin button state for the newly loaded note
+		const note = notes.find((n) => n.id === noteId);
+		if (note) {
+			updatePinButton(togglePinBtn, note.pinned);
+		}
+		
+		// Handle split view based on pinned note
+		if (pinnedNote) {
+			if (pinnedNote.id === noteId) {
+				// Switching TO a pinned note - hide split view
+				await hidePinnedView();
+			} else if (pinnedNote.id === oldActiveNoteId) {
+				// Switching FROM a pinned note - show it in split view
+				await loadPinnedNote(pinnedNote.id);
+			}
+		}
 	}
 
 	async function togglePinNote(noteId) {
@@ -572,29 +742,41 @@ document.addEventListener("DOMContentLoaded", () => {
 
 			const currentPinStatus = notes[noteIndex].pinned;
 
-			// If trying to pin a note
-			if (!currentPinStatus) {
-				// Unpin all other notes (only one pinned note allowed)
-				notes.forEach((note, idx) => {
-					if (idx !== noteIndex && note.pinned) {
-						note.pinned = false;
-					}
-				});
+		// If trying to pin a note
+		if (!currentPinStatus) {
+			// Unpin all other notes (only one pinned note allowed)
+			notes.forEach((note, idx) => {
+				if (idx !== noteIndex && note.pinned) {
+					note.pinned = false;
+				}
+			});
 
-				// Pin the selected note
-				notes[noteIndex].pinned = true;
+			// Pin the selected note
+			notes[noteIndex].pinned = true;
 
-				await chrome.storage.local.set({ notes });
-				renderNoteList();
+			await chrome.storage.local.set({ notes });
+			renderNoteList();
 
-				// Load the pinned note in the right editor
-				await loadPinnedNote(noteId);
-			} else {
+		// Update main editor pin button if this is the active note
+		if (noteId === activeNoteId) {
+			updatePinButton(togglePinBtn, true);
+			// Close split view when pinning the active note
+			await hidePinnedView();
+		} else {
+			// Load the pinned note in the right editor (split view)
+			await loadPinnedNote(noteId);
+		}
+		} else {
 				// Unpin the note
 				notes[noteIndex].pinned = false;
 
 				await chrome.storage.local.set({ notes });
 				renderNoteList();
+
+				// Update main editor pin button if this is the active note
+				if (noteId === activeNoteId) {
+					updatePinButton(togglePinBtn, false);
+				}
 
 				// Hide the pinned view
 				await hidePinnedView();
@@ -627,9 +809,59 @@ document.addEventListener("DOMContentLoaded", () => {
 				togglePinNote(activeNoteId);
 			}
 		}
+
+		// Ctrl/Cmd + E for copy markdown to clipboard
+		if ((e.ctrlKey || e.metaKey) && e.key === "e") {
+			e.preventDefault();
+			copyMarkdown(editor);
+		}
+
+		// Ctrl/Cmd + D for download markdown file
+		if ((e.ctrlKey || e.metaKey) && e.key === "d") {
+			e.preventDefault();
+			if (activeNoteId) {
+				downloadMarkdown(editor, activeNoteId);
+			}
+		}
 	});
 
 	newNoteButton.addEventListener("click", () => createNewNote(true));
+
+	// Add action bar event listeners
+	copyMarkdownBtn.addEventListener("click", () => copyMarkdown(editor));
+	copyMarkdownPinnedBtn.addEventListener("click", () => copyMarkdown(pinnedEditor));
+	
+	downloadMarkdownBtn.addEventListener("click", () => {
+		if (activeNoteId) {
+			downloadMarkdown(editor, activeNoteId);
+		}
+	});
+	
+	downloadMarkdownPinnedBtn.addEventListener("click", () => {
+		if (pinnedNoteId) {
+			downloadMarkdown(pinnedEditor, pinnedNoteId);
+		}
+	});
+	
+	togglePinBtn.addEventListener("click", () => {
+		if (activeNoteId) {
+			togglePinNote(activeNoteId);
+		}
+	});
+	
+	togglePinPinnedBtn.addEventListener("click", () => {
+		if (pinnedNoteId) {
+			togglePinNote(pinnedNoteId);
+		}
+	});
+
+	// Initialize action bar icons
+	copyMarkdownBtn.innerHTML = getCopyIcon();
+	copyMarkdownPinnedBtn.innerHTML = getCopyIcon();
+	downloadMarkdownBtn.innerHTML = getMarkdownIcon();
+	downloadMarkdownPinnedBtn.innerHTML = getMarkdownIcon();
+	togglePinBtn.innerHTML = getPinIcon(false);
+	togglePinPinnedBtn.innerHTML = getPinIcon(true);
 
 	// Add keyboard navigation for note list
 	noteList.addEventListener("keydown", (e) => {
