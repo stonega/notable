@@ -138,6 +138,36 @@ a {
 	padding: 12px;
 }
 
+.sidebar-footer {
+	padding: 16px;
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	background: var(--bg-secondary);
+	border-top: 1px solid var(--border-color);
+}
+
+.sidebar-footer a {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	color: var(--text-secondary);
+	transition: var(--transition);
+	padding: 8px;
+	border-radius: var(--radius-md);
+}
+
+.sidebar-footer a:hover {
+	color: var(--text-primary);
+	background: var(--bg-tertiary);
+}
+
+.sidebar-footer-text {
+	font-size: 12px;
+	font-weight: 400;
+	color: var(--text-primary);
+}
+
 /* Simple New Note Button */
 #new-note {
 	width: 100%;
