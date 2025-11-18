@@ -103,10 +103,9 @@ a {
 .sidebar {
 	width: var(--sidebar-width);
 	height: 100vh;
-	border-radius: 0 var(--radius-lg) var(--radius-lg) 0;
-	background: var(--bg-secondary);
 	display: flex;
 	flex-direction: column;
+	background-color: var(--bg-primary);
 	padding: 0;
 	transition: var(--transition);
 }
@@ -114,7 +113,7 @@ a {
 .sidebar-header {
 	padding: 12px;
 	margin-top: 6px;
-	background: var(--bg-secondary);
+	border-bottom: 1px solid var(--border-color);
 }
 
 .sidebar-title {
@@ -143,7 +142,6 @@ a {
 	display: flex;
 	justify-content: space-between;
 	align-items: center;
-	background: var(--bg-secondary);
 	border-top: 1px solid var(--border-color);
 }
 
