@@ -4,12 +4,12 @@ Notable is a simple, fullscreen notebook that replaces your Chrome new tab page.
 
 ## Features
 
-*   **Fullscreen Editor**: A clean, distraction-free writing environment powered by [Editor.js](https://editorjs.io/).
-*   **Note List**: A sidebar on the left displays all your notes.
-*   **Pin Notes**: Pin important notes to keep them at the top of your note list for quick access.
-*   **Multi-window Support**: Each Chrome window gets its own active note, so you can work on different things in different windows.
-*   **Local Storage**: All your notes are saved securely in your browser's local storage. No cloud, no accounts.
-*   **Basic Note Management**: Create new notes, switch between them, and delete them easily.
+*   ✏️ **Fullscreen Editor**: A clean, distraction-free writing environment powered by [Editor.js](https://editorjs.io/).
+*   📋 **Note List**: A sidebar on the left displays all your notes.
+*   📌 **Pin Notes**: Pin important notes to keep them at the top of your note list for quick access.
+*   🪟 **Multi-window Support**: Each Chrome window gets its own active note, so you can work on different things in different windows.
+*   💾 **Local Storage**: All your notes are saved securely in your browser's local storage. No cloud, no accounts.
+*   🗂️ **Basic Note Management**: Create new notes, switch between them, and delete them easily.
 
 ## How to Install
 
