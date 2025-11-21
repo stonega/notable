@@ -7,3 +7,6 @@
 
 ## v1.6.0
 - Minor style fixes.
+
+## v1.9.0
+- Support themes.
