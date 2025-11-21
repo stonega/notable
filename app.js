@@ -113,6 +113,89 @@ document.addEventListener("DOMContentLoaded", () => {
 	const downloadMarkdownPinnedBtn = document.getElementById("download-markdown-pinned");
 	const togglePinPinnedBtn = document.getElementById("toggle-pin-pinned");
 
+    // Theme handling
+    const themeBtn = document.getElementById("theme-btn");
+    const themePopup = document.getElementById("theme-popup");
+    const closeThemePopupBtn = document.getElementById("close-theme-popup");
+    const lightThemesContainer = document.getElementById("light-themes");
+    const darkThemesContainer = document.getElementById("dark-themes");
+
+    function applyTheme(theme) {
+        if (window.applyTheme) {
+            window.applyTheme(theme);
+        }
+        
+        // Save theme to storage
+        chrome.storage.local.set({ currentTheme: theme });
+    }
+
+    function renderThemes(currentTheme) {
+        function createThemeOption(theme) {
+            const option = document.createElement("div");
+            option.className = "theme-option";
+            option.title = theme.name || "Select Theme";
+            
+            const preview = document.createElement("div");
+            preview.className = "theme-preview";
+            
+            const left = document.createElement("div");
+            left.className = "theme-preview-left";
+            left.style.backgroundColor = theme["bg-primary"];
+            
+            const right = document.createElement("div");
+            right.className = "theme-preview-right";
+            right.style.backgroundColor = theme["primary-color"];
+            
+            preview.appendChild(left);
+            preview.appendChild(right);
+            option.appendChild(preview);
+
+            if (currentTheme && currentTheme.name === theme.name && currentTheme["bg-primary"] === theme["bg-primary"]) {
+                option.classList.add("active");
+            }
+            
+            option.addEventListener("click", () => {
+                applyTheme(theme);
+                // Update active state visually if needed
+                document.querySelectorAll(".theme-option").forEach(opt => opt.classList.remove("active"));
+                option.classList.add("active");
+            });
+            
+            return option;
+        }
+
+        if (window.lightThemes) {
+            lightThemesContainer.innerHTML = '';
+            window.lightThemes.forEach(theme => {
+                lightThemesContainer.appendChild(createThemeOption(theme));
+            });
+        }
+
+        if (window.darkThemes) {
+            darkThemesContainer.innerHTML = '';
+            window.darkThemes.forEach(theme => {
+                darkThemesContainer.appendChild(createThemeOption(theme));
+            });
+        }
+    }
+
+    themeBtn.addEventListener("click", (e) => {
+        e.stopPropagation();
+        themePopup.classList.remove("hidden");
+    });
+
+    closeThemePopupBtn.addEventListener("click", () => {
+        themePopup.classList.add("hidden");
+    });
+
+    document.addEventListener("click", (e) => {
+        if (!themePopup.classList.contains("hidden") && 
+            !themePopup.contains(e.target) && 
+            !themeBtn.contains(e.target)) {
+            themePopup.classList.add("hidden");
+        }
+    });
+
 	let notes = [];
 	let activeNoteId = null;
 	let pinnedNoteId = null;
@@ -335,8 +418,10 @@ document.addEventListener("DOMContentLoaded", () => {
 		const window = await chrome.windows.getCurrent();
 		currentWindowId = window.id;
 
-		const data = await chrome.storage.local.get(["notes", "windowActiveNotes"]);
+		const data = await chrome.storage.local.get(["notes", "windowActiveNotes", "currentTheme"]);
 		notes = data.notes || [];
+        
+        renderThemes(data.currentTheme);
 
 		// Ensure backward compatibility: add pinned property to existing notes
 		let needsUpdate = false;
@@ -373,9 +458,6 @@ document.addEventListener("DOMContentLoaded", () => {
 		}
 
 		renderNoteList();
-
-		// Add fade-in animation to the app
-		document.body.classList.add("fade-in");
 	}
 
 	function renderNoteList() {

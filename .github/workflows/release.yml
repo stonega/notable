@@ -16,7 +16,7 @@ jobs:
 
       - name: Package extension
         run: |
-          zip -r notable-extension-${{ github.ref_name }}.zip manifest.json index.html app.js editor.js styles.css background.js logo.png tools/
+          zip -r notable-extension-${{ github.ref_name }}.zip manifest.json index.html app.js editor.js theme.js styles.css background.js logo.png tools/
 
       - name: Create Release
         uses: softprops/action-gh-release@v1
