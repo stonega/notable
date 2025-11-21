@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "Notable",
-  "version": "1.7",
+  "version": "1.8",
   "description": "New tab, new note.",
   "chrome_url_overrides": {
     "newtab": "index.html"
