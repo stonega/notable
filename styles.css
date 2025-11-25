@@ -234,7 +234,7 @@ a {
 	color: var(--text-primary);
 }
 
-#note-list li.active::before {
+#note-list li.active:not(.pinned-display)::before {
 	content: "";
 	position: absolute;
 	left: 0;
@@ -297,8 +297,8 @@ a {
 .pin-note-unpin {
 	width: auto;
 	height: auto;
-	padding: 4px 12px;
-	font-size: 0.85rem;
+	padding: 6px 12px;
+	font-size: 1rem;
 	border-radius: var(--radius-lg);
 	background: var(--bg-tertiary);
 	color: var(--text-primary);
@@ -306,7 +306,7 @@ a {
 }
 
 .pin-note-unpin:hover {
-	background: var(--danger-color);
+	background: var(--primary-color);
 	color: var(--text-inverse);
 }
 
@@ -337,7 +337,7 @@ a {
 	top: 50%;
 	transform: translateY(-50%) translateX(-8px);
 	width: 6px;
-	height: 28px;
+	height: 6px;
 	background: var(--primary-color);
 	border-radius: 8px;
 }

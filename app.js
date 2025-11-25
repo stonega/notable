@@ -200,6 +200,8 @@ document.addEventListener("DOMContentLoaded", () => {
 	let activeNoteId = null;
 	let pinnedNoteId = null;
 	let draggedNoteId = null;
+	let currentDragTargetId = null;
+	let currentDragPosition = null; // 'top' or 'bottom'
 	let isUpdatingFromStorage = false; // Flag to prevent infinite loops
 
 	// Convert EditorJS data to Markdown
@@ -940,6 +942,8 @@ document.addEventListener("DOMContentLoaded", () => {
 			}
 		}
 		draggedNoteId = null;
+		currentDragTargetId = null;
+		currentDragPosition = null;
 		clearDragIndicators();
 	}
 
@@ -961,16 +965,42 @@ document.addEventListener("DOMContentLoaded", () => {
 			return;
 		}
 		event.preventDefault();
-		clearDragIndicators();
+
 		const rect = target.getBoundingClientRect();
 		const isAfter = event.clientY - rect.top > rect.height / 2;
-		target.classList.add(isAfter ? "drag-over-bottom" : "drag-over-top");
+		const position = isAfter ? "bottom" : "top";
+		const targetId = target.dataset.noteId;
+		const activeClass = isAfter ? "drag-over-bottom" : "drag-over-top";
+
+		// Performance optimization: don't update DOM if state hasn't changed
+		if (
+			currentDragTargetId === targetId &&
+			currentDragPosition === position &&
+			target.classList.contains(activeClass)
+		) {
+			return;
+		}
+
+		clearDragIndicators();
+		currentDragTargetId = targetId;
+		currentDragPosition = position;
+		target.classList.add(activeClass);
 	}
 
 	function handleDragLeave(event) {
 		const target = event.currentTarget;
 		if (!target) return;
-		target.classList.remove("drag-over-top", "drag-over-bottom");
+		
+		// Don't remove classes here as handleDragOver manages them more efficiently
+		// and we don't want to cause flickering when moving between elements
+		if (target.dataset.noteId === currentDragTargetId) {
+			// Only clear if we're actually leaving the current target
+			// and not just entering a child element
+			if (!target.contains(event.relatedTarget)) {
+				// Optional: could reset state here, but handleDragOver handles the transition
+				// target.classList.remove("drag-over-top", "drag-over-bottom");
+			}
+		}
 	}
 
 	async function handleDrop(event) {
@@ -996,23 +1026,90 @@ document.addEventListener("DOMContentLoaded", () => {
 		resetDragState();
 	}
 
+	function getClosestListItem(y) {
+		const items = Array.from(noteList.querySelectorAll("li[data-note-id]:not(.dragging)"));
+		return items.reduce(
+			(closest, child) => {
+				const box = child.getBoundingClientRect();
+				const dist = Math.abs(y - (box.top + box.height / 2));
+				if (dist < closest.dist) {
+					return { dist: dist, element: child };
+				} else {
+					return closest;
+				}
+			},
+			{ dist: Number.POSITIVE_INFINITY, element: null },
+		).element;
+	}
+
 	function handleListDragOver(event) {
 		if (!draggedNoteId) return;
-		const target = event.target.closest("li[data-note-id]");
-		if (!target) {
-			event.preventDefault();
+		
+		// If hovering over a list item, the LI handler handles it
+		if (event.target.closest("li[data-note-id]")) return;
+
+		event.preventDefault();
+		
+		const closest = getClosestListItem(event.clientY);
+		
+		if (closest) {
+			const rect = closest.getBoundingClientRect();
+			const isAfter = event.clientY - rect.top > rect.height / 2;
+			const position = isAfter ? "bottom" : "top";
+			const targetId = closest.dataset.noteId;
+			const activeClass = isAfter ? "drag-over-bottom" : "drag-over-top";
+
+			// Performance optimization: don't update DOM if state hasn't changed
+			if (
+				currentDragTargetId === targetId &&
+				currentDragPosition === position &&
+				closest.classList.contains(activeClass)
+			) {
+				return;
+			}
+
 			clearDragIndicators();
+			currentDragTargetId = targetId;
+			currentDragPosition = position;
+			closest.classList.add(activeClass);
+		} else {
+			// If no closest item found (empty list or far away), clear indicators
+			if (currentDragTargetId !== null) {
+				clearDragIndicators();
+				currentDragTargetId = null;
+				currentDragPosition = null;
+			}
 		}
+	}
+
+	function handleListDragLeave(event) {
+		// If leaving the list for a child or staying within list, ignore
+		if (noteList.contains(event.relatedTarget)) return;
+		
+		clearDragIndicators();
+		currentDragTargetId = null;
+		currentDragPosition = null;
 	}
 
 	async function handleListDrop(event) {
 		if (!draggedNoteId) return;
 		event.preventDefault();
-		const target = event.target.closest("li[data-note-id]");
-		if (target) {
+		
+		// If dropped on list item, LI handler handles it (due to stopPropagation)
+		if (event.target.closest("li[data-note-id]")) {
 			return;
 		}
-		await reorderNotes(draggedNoteId);
+
+		const closest = getClosestListItem(event.clientY);
+		
+		if (closest && closest.dataset.noteId !== draggedNoteId) {
+			const rect = closest.getBoundingClientRect();
+			const placeAfter = event.clientY - rect.top > rect.height / 2;
+			await reorderNotes(draggedNoteId, closest.dataset.noteId, placeAfter);
+		} else if (!closest) {
+			await reorderNotes(draggedNoteId);
+		}
+		
 		resetDragState();
 	}
 
@@ -1119,6 +1216,7 @@ document.addEventListener("DOMContentLoaded", () => {
 	});
 
 	noteList.addEventListener("dragover", handleListDragOver);
+	noteList.addEventListener("dragleave", handleListDragLeave);
 	noteList.addEventListener("drop", handleListDrop);
 
 	// Initialize action bar icons
