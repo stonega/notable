@@ -200,6 +200,8 @@ document.addEventListener("DOMContentLoaded", () => {
 	let activeNoteId = null;
 	let pinnedNoteId = null;
 	let isUpdatingFromStorage = false; // Flag to prevent infinite loops
+	let draggedElement = null;
+	let draggedNoteId = null;
 
 	// Convert EditorJS data to Markdown
 	function convertToMarkdown(data) {
@@ -414,6 +416,90 @@ document.addEventListener("DOMContentLoaded", () => {
 		}
 	}
 
+	// Drag and drop handlers
+	function handleDragStart(e) {
+		draggedElement = e.target.closest('li');
+		draggedNoteId = draggedElement.dataset.noteId;
+		draggedElement.classList.add('dragging');
+		e.dataTransfer.effectAllowed = 'move';
+		e.dataTransfer.setData('text/html', draggedElement.innerHTML);
+	}
+
+	function handleDragEnd(e) {
+		if (draggedElement) {
+			draggedElement.classList.remove('dragging');
+		}
+		// Remove all drag-over classes
+		document.querySelectorAll('.drag-over').forEach(el => {
+			el.classList.remove('drag-over');
+		});
+		draggedElement = null;
+		draggedNoteId = null;
+	}
+
+	function handleDragOver(e) {
+		if (e.preventDefault) {
+			e.preventDefault();
+		}
+		e.dataTransfer.dropEffect = 'move';
+		
+		const targetLi = e.target.closest('li');
+		if (targetLi && targetLi !== draggedElement && targetLi.dataset.noteId) {
+			targetLi.classList.add('drag-over');
+		}
+		
+		return false;
+	}
+
+	function handleDragLeave(e) {
+		const targetLi = e.target.closest('li');
+		if (targetLi) {
+			targetLi.classList.remove('drag-over');
+		}
+	}
+
+	async function handleDrop(e) {
+		if (e.stopPropagation) {
+			e.stopPropagation();
+		}
+		e.preventDefault();
+
+		const targetLi = e.target.closest('li');
+		if (!targetLi || !targetLi.dataset.noteId || !draggedNoteId) {
+			return false;
+		}
+
+		const targetNoteId = targetLi.dataset.noteId;
+		
+		if (draggedNoteId === targetNoteId) {
+			return false;
+		}
+
+		// Find the indices in the notes array
+		const draggedIndex = notes.findIndex(n => n.id === draggedNoteId);
+		const targetIndex = notes.findIndex(n => n.id === targetNoteId);
+
+		if (draggedIndex === -1 || targetIndex === -1) {
+			return false;
+		}
+
+		// Reorder the notes array
+		isUpdatingFromStorage = true;
+		try {
+			const [draggedNote] = notes.splice(draggedIndex, 1);
+			notes.splice(targetIndex, 0, draggedNote);
+
+			await chrome.storage.local.set({ notes });
+			renderNoteList();
+		} catch (error) {
+			console.error("Error reordering notes:", error);
+		} finally {
+			isUpdatingFromStorage = false;
+		}
+
+		return false;
+	}
+
 	async function initialize() {
 		const window = await chrome.windows.getCurrent();
 		currentWindowId = window.id;
@@ -478,11 +564,11 @@ document.addEventListener("DOMContentLoaded", () => {
 			return;
 		}
 
-		// Sort notes: pinned notes first, then by creation date (newest first)
+		// Sort notes: pinned notes first, then maintain custom order
 		const sortedNotes = [...notes].sort((a, b) => {
 			if (a.pinned && !b.pinned) return -1;
 			if (!a.pinned && b.pinned) return 1;
-			return new Date(b.createdAt) - new Date(a.createdAt);
+			return 0; // Maintain array order for non-pinned notes
 		});
 
 		sortedNotes.forEach((note, index) => {
@@ -494,6 +580,9 @@ document.addEventListener("DOMContentLoaded", () => {
 			li.setAttribute("role", "listitem");
 			li.setAttribute("tabindex", "0");
 			li.setAttribute("aria-label", `Note: ${noteTitle}`);
+			
+			// Make note draggable
+			li.setAttribute("draggable", "true");
 
 			// Create note title element
 			const titleElement = document.createElement("div");
@@ -535,14 +624,23 @@ document.addEventListener("DOMContentLoaded", () => {
 				li.classList.add("pinned");
 			}
 
-			// Add click and keyboard event listeners
-			li.addEventListener("click", () => switchNote(note.id));
-			li.addEventListener("keydown", (e) => {
-				if (e.key === "Enter" || e.key === " ") {
-					e.preventDefault();
-					switchNote(note.id);
-				}
-			});
+			// Add click and keyboard event listeners - but not for pinned notes
+			if (!note.pinned) {
+				li.addEventListener("click", () => switchNote(note.id));
+				li.addEventListener("keydown", (e) => {
+					if (e.key === "Enter" || e.key === " ") {
+						e.preventDefault();
+						switchNote(note.id);
+					}
+				});
+			}
+			
+			// Add drag event listeners
+			li.addEventListener("dragstart", handleDragStart);
+			li.addEventListener("dragend", handleDragEnd);
+			li.addEventListener("dragover", handleDragOver);
+			li.addEventListener("drop", handleDrop);
+			li.addEventListener("dragleave", handleDragLeave);
 
 			noteList.appendChild(li);
 		});

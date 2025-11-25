@@ -223,6 +223,20 @@ a {
 	transition: var(--transition);
 	position: relative;
 	background: transparent;
+	border: 1px solid transparent;
+}
+
+#note-list li[draggable="true"] {
+	cursor: move;
+}
+
+#note-list li.dragging {
+	opacity: 0.5;
+	cursor: grabbing;
+}
+
+#note-list li.drag-over {
+	border-top: 2px solid var(--primary-color);
 }
 
 #note-list li:hover {
@@ -296,7 +310,26 @@ a {
 
 /* Pinned Note Indicator */
 #note-list li.pinned {
-	display: none;
+	background: var(--bg-tertiary);
+	color: var(--text-primary);
+	cursor: default;
+	border: 1px solid var(--primary-color);
+}
+
+#note-list li.pinned::before {
+	content: "";
+	position: absolute;
+	left: 0;
+	top: 50%;
+	transform: translateY(-50%) translateX(-8px);
+	width: 6px;
+	height: 28px;
+	background: var(--primary-color);
+	border-radius: 8px;
+}
+
+#note-list li.pinned:hover {
+	background: var(--bg-tertiary);
 }
 
 /* Note Actions Container */
@@ -313,7 +346,15 @@ a {
 }
 
 #note-list li.pinned .note-actions {
+	opacity: 0;
+}
+
+#note-list li.pinned:hover .note-actions {
 	opacity: 1;
+}
+
+#note-list li.pinned .note-actions .delete-note {
+	display: none;
 }
 
 /* Simple Delete Button */
