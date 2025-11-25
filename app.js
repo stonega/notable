@@ -199,6 +199,7 @@ document.addEventListener("DOMContentLoaded", () => {
 	let notes = [];
 	let activeNoteId = null;
 	let pinnedNoteId = null;
+	let draggedNoteId = null;
 	let isUpdatingFromStorage = false; // Flag to prevent infinite loops
 
 	// Convert EditorJS data to Markdown
@@ -478,64 +479,92 @@ document.addEventListener("DOMContentLoaded", () => {
 			return;
 		}
 
-		// Sort notes: pinned notes first, then by creation date (newest first)
-		const sortedNotes = [...notes].sort((a, b) => {
-			if (a.pinned && !b.pinned) return -1;
-			if (!a.pinned && b.pinned) return 1;
-			return new Date(b.createdAt) - new Date(a.createdAt);
+		const pinnedNotes = notes.filter((note) => note.pinned);
+		const unpinnedNotes = notes.filter((note) => !note.pinned);
+
+		// Show pinned notes (read-only, used as indicators)
+		pinnedNotes.forEach((note) => {
+			const pinnedItem = createNoteListItem(note, {
+				disableSwitch: true,
+				pinnedDisplay: true,
+			});
+			noteList.appendChild(pinnedItem);
 		});
 
-		sortedNotes.forEach((note, index) => {
-			const li = document.createElement("li");
-			const noteTitle = getNoteTitle(note);
-
-			li.className = note.id === activeNoteId ? "active" : "";
-			li.dataset.noteId = note.id;
-			li.setAttribute("role", "listitem");
-			li.setAttribute("tabindex", "0");
-			li.setAttribute("aria-label", `Note: ${noteTitle}`);
-
-			// Create note title element
-			const titleElement = document.createElement("div");
-			titleElement.className = "note-title";
-			titleElement.textContent = noteTitle;
-
-			// Create actions container
-			const actionsContainer = document.createElement("div");
-			actionsContainer.className = "note-actions";
-
-			// Create pin button
-			const pinBtn = document.createElement("button");
-			pinBtn.innerHTML = getPinIcon(note.pinned);
-			pinBtn.className = `pin-note ${note.pinned ? "pinned" : ""}`;
-			pinBtn.setAttribute("aria-label", note.pinned ? `Unpin note: ${noteTitle}` : `Pin note: ${noteTitle}`);
-			pinBtn.addEventListener("click", (e) => {
-				e.stopPropagation();
-				togglePinNote(note.id);
+		// Show unpinned notes in their saved order
+		unpinnedNotes.forEach((note) => {
+			const item = createNoteListItem(note, {
+				disableSwitch: false,
+				draggable: true,
 			});
+			noteList.appendChild(item);
+		});
+	}
 
-			// Create delete button
-			const deleteBtn = document.createElement("button");
-			deleteBtn.innerHTML = "×";
-			deleteBtn.className = "delete-note";
-			deleteBtn.setAttribute("aria-label", `Delete note: ${noteTitle}`);
-			deleteBtn.addEventListener("click", (e) => {
-				e.stopPropagation();
-				deleteNote(note.id);
-			});
+	function createNoteListItem(
+		note,
+		{ disableSwitch = false, pinnedDisplay = false, draggable = false } = {},
+	) {
+		const li = document.createElement("li");
+		const noteTitle = getNoteTitle(note);
+		const isActive = note.id === activeNoteId;
 
-			actionsContainer.appendChild(pinBtn);
-			actionsContainer.appendChild(deleteBtn);
+		li.dataset.noteId = note.id;
+		li.setAttribute("role", "listitem");
+		li.setAttribute("aria-label", `${pinnedDisplay ? "Pinned note" : "Note"}: ${noteTitle}`);
+		li.tabIndex = disableSwitch ? -1 : 0;
 
-			li.appendChild(titleElement);
-			li.appendChild(actionsContainer);
+		if (disableSwitch) {
+			li.setAttribute("aria-disabled", "true");
+		}
 
-			// Add pinned class if note is pinned
-			if (note.pinned) {
-				li.classList.add("pinned");
-			}
+		if (isActive) {
+			li.classList.add("active");
+		}
 
-			// Add click and keyboard event listeners
+		if (pinnedDisplay) {
+			li.classList.add("pinned-display");
+		}
+
+		// Create note title element
+		const titleElement = document.createElement("div");
+		titleElement.className = "note-title";
+		titleElement.textContent = noteTitle;
+
+		// Create actions container
+		const actionsContainer = document.createElement("div");
+		actionsContainer.className = "note-actions";
+
+		// Create pin button
+		const pinBtn = document.createElement("button");
+		pinBtn.innerHTML = getPinIcon(note.pinned);
+		pinBtn.className = `pin-note ${note.pinned ? "pinned" : ""}`;
+		pinBtn.setAttribute(
+			"aria-label",
+			note.pinned ? `Unpin note: ${noteTitle}` : `Pin note: ${noteTitle}`,
+		);
+		pinBtn.addEventListener("click", (e) => {
+			e.stopPropagation();
+			togglePinNote(note.id);
+		});
+
+		// Create delete button
+		const deleteBtn = document.createElement("button");
+		deleteBtn.innerHTML = "×";
+		deleteBtn.className = "delete-note";
+		deleteBtn.setAttribute("aria-label", `Delete note: ${noteTitle}`);
+		deleteBtn.addEventListener("click", (e) => {
+			e.stopPropagation();
+			deleteNote(note.id);
+		});
+
+		actionsContainer.appendChild(pinBtn);
+		actionsContainer.appendChild(deleteBtn);
+
+		li.appendChild(titleElement);
+		li.appendChild(actionsContainer);
+
+		if (!disableSwitch) {
 			li.addEventListener("click", () => switchNote(note.id));
 			li.addEventListener("keydown", (e) => {
 				if (e.key === "Enter" || e.key === " ") {
@@ -543,9 +572,92 @@ document.addEventListener("DOMContentLoaded", () => {
 					switchNote(note.id);
 				}
 			});
+		}
 
-			noteList.appendChild(li);
+		if (draggable) {
+			li.setAttribute("draggable", "true");
+			li.addEventListener("dragstart", (event) => handleDragStart(event, note.id));
+			li.addEventListener("dragover", (event) => handleDragOver(event, note.id));
+			li.addEventListener("dragleave", handleDragLeave);
+			li.addEventListener("drop", (event) => handleDrop(event, note.id));
+			li.addEventListener("dragend", handleDragEnd);
+		}
+
+		return li;
+	}
+
+	function handleDragStart(event, noteId) {
+		const note = notes.find((n) => n.id === noteId);
+		if (!note || note.pinned) return;
+		draggedNoteId = noteId;
+		event.dataTransfer.effectAllowed = "move";
+		event.dataTransfer.setData("text/plain", noteId);
+		event.currentTarget.classList.add("dragging");
+	}
+
+	function handleDragOver(event, noteId) {
+		if (!draggedNoteId || draggedNoteId === noteId) return;
+		const targetNote = notes.find((n) => n.id === noteId);
+		if (!targetNote || targetNote.pinned) return;
+		event.preventDefault();
+		const target = event.currentTarget;
+		const rect = target.getBoundingClientRect();
+		const offset = event.clientY - rect.top;
+		target.dataset.dropPosition = offset < rect.height / 2 ? "before" : "after";
+		target.classList.add("drag-over");
+	}
+
+	function handleDragLeave(event) {
+		event.currentTarget.classList.remove("drag-over");
+		delete event.currentTarget.dataset.dropPosition;
+	}
+
+	function handleDrop(event, targetNoteId) {
+		if (!draggedNoteId || draggedNoteId === targetNoteId) return;
+		const targetNote = notes.find((n) => n.id === targetNoteId);
+		if (!targetNote || targetNote.pinned) return;
+		event.preventDefault();
+		const dropPosition = event.currentTarget.dataset.dropPosition || "after";
+		reorderNotes(draggedNoteId, targetNoteId, dropPosition === "before");
+		clearDragStates();
+		renderNoteList();
+		persistNoteOrder();
+		draggedNoteId = null;
+	}
+
+	function handleDragEnd(event) {
+		event.currentTarget.classList.remove("dragging");
+		clearDragStates();
+		draggedNoteId = null;
+	}
+
+	function clearDragStates() {
+		noteList.querySelectorAll(".drag-over").forEach((item) => {
+			item.classList.remove("drag-over");
+			delete item.dataset.dropPosition;
 		});
+	}
+
+	function reorderNotes(draggedId, targetId, insertBeforeTarget) {
+		const draggedIndex = notes.findIndex((n) => n.id === draggedId);
+		let targetIndex = notes.findIndex((n) => n.id === targetId);
+		if (draggedIndex === -1 || targetIndex === -1) return;
+
+		const draggedNote = notes[draggedIndex];
+		if (draggedNote.pinned) return;
+
+		notes.splice(draggedIndex, 1);
+		targetIndex = notes.findIndex((n) => n.id === targetId);
+		const insertIndex = insertBeforeTarget ? targetIndex : targetIndex + 1;
+		notes.splice(insertIndex, 0, draggedNote);
+	}
+
+	async function persistNoteOrder() {
+		try {
+			await chrome.storage.local.set({ notes });
+		} catch (error) {
+			console.error("Error saving note order:", error);
+		}
 	}
 
 	function getNoteTitle(note) {
@@ -964,17 +1076,21 @@ document.addEventListener("DOMContentLoaded", () => {
 			const currentIndex = items.findIndex((item) =>
 				item.classList.contains("active"),
 			);
-			let newIndex;
+			if (currentIndex === -1) return;
 
-			if (e.key === "ArrowUp") {
-				newIndex = currentIndex > 0 ? currentIndex - 1 : items.length - 1;
-			} else {
-				newIndex = currentIndex < items.length - 1 ? currentIndex + 1 : 0;
-			}
+			const direction = e.key === "ArrowUp" ? -1 : 1;
+			let steps = 0;
+			let newIndex = currentIndex;
 
-			if (items[newIndex]) {
-				const noteId = items[newIndex].dataset.noteId;
-				switchNote(noteId);
+			while (steps < items.length) {
+				newIndex = (newIndex + direction + items.length) % items.length;
+				const candidate = items[newIndex];
+				if (!candidate.classList.contains("pinned-display")) {
+					const noteId = candidate.dataset.noteId;
+					switchNote(noteId);
+					break;
+				}
+				steps += 1;
 			}
 		}
 	});

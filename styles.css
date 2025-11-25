@@ -229,21 +229,10 @@ a {
 	background: var(--bg-tertiary);
 }
 
-#note-list li.active {
+#note-list li.active,
+#note-list li.pinned-display {
 	background: var(--bg-tertiary);
 	color: var(--text-primary);
-}
-
-#note-list li.active::before {
-	content: "";
-	position: absolute;
-	left: 0;
-	top: 50%;
-	transform: translateY(-50%) translateX(-8px);
-	width: 6px;
-	height: 28px;
-	background: var(--primary-color);
-	border-radius: 8px;
 }
 
 .note-title {
@@ -294,11 +283,6 @@ a {
 	background: var(--primary-light);
 }
 
-/* Pinned Note Indicator */
-#note-list li.pinned {
-	display: none;
-}
-
 /* Note Actions Container */
 .note-actions {
 	display: flex;
@@ -309,10 +293,6 @@ a {
 }
 
 #note-list li:hover .note-actions {
-	opacity: 1;
-}
-
-#note-list li.pinned .note-actions {
 	opacity: 1;
 }
 
@@ -339,6 +319,63 @@ a {
 .delete-note:hover {
 	background: var(--danger-color);
 	color: var(--text-inverse);
+}
+
+/* Pinned Note Display */
+#note-list li.pinned-display {
+	cursor: default;
+}
+
+#note-list li.pinned-display::before,
+#note-list li.active::before {
+	content: "";
+	position: absolute;
+	left: 0;
+	top: 50%;
+	transform: translateY(-50%) translateX(-8px);
+	width: 6px;
+	height: 28px;
+	background: var(--primary-color);
+	border-radius: 8px;
+}
+
+#note-list li.pinned-display .note-title::after {
+	content: "Pinned";
+	font-size: 0.65rem;
+	text-transform: uppercase;
+	margin-left: 8px;
+	color: var(--primary-color);
+	background: color-mix(in srgb, var(--primary-color) 15%, transparent);
+	padding: 2px 6px;
+	border-radius: var(--radius-md);
+}
+
+#note-list li.pinned-display .note-title {
+	display: flex;
+	align-items: center;
+	gap: 6px;
+}
+
+#note-list li.pinned-display .pin-note {
+	opacity: 0;
+}
+
+#note-list li.pinned-display:hover .pin-note {
+	opacity: 1;
+}
+
+/* Drag states */
+#note-list li[draggable="true"] {
+	cursor: grab;
+}
+
+#note-list li.dragging {
+	opacity: 0.5;
+	cursor: grabbing;
+}
+
+#note-list li.drag-over {
+	outline: 1px dashed var(--primary-color);
 }
 
 /* Clean Editor Container - Centered with Split View Support */
