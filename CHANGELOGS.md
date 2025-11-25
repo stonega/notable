@@ -10,3 +10,6 @@
 
 ## v1.9.0
 - Support themes.
+
+## v1.10.0
+- Support note reordering.
