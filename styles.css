@@ -294,9 +294,20 @@ a {
 	background: var(--primary-light);
 }
 
-/* Pinned Note Indicator */
-#note-list li.pinned {
-	display: none;
+.pin-note-unpin {
+	width: auto;
+	height: auto;
+	padding: 4px 12px;
+	font-size: 0.85rem;
+	border-radius: var(--radius-lg);
+	background: var(--bg-tertiary);
+	color: var(--text-primary);
+	opacity: 1;
+}
+
+.pin-note-unpin:hover {
+	background: var(--danger-color);
+	color: var(--text-inverse);
 }
 
 /* Note Actions Container */
@@ -312,8 +323,49 @@ a {
 	opacity: 1;
 }
 
-#note-list li.pinned .note-actions {
-	opacity: 1;
+/* Pinned note display */
+#note-list li.pinned-display {
+	background: var(--bg-tertiary);
+	color: var(--text-primary);
+	cursor: default;
+}
+
+#note-list li.pinned-display::before {
+	content: "";
+	position: absolute;
+	left: 0;
+	top: 50%;
+	transform: translateY(-50%) translateX(-8px);
+	width: 6px;
+	height: 28px;
+	background: var(--primary-color);
+	border-radius: 8px;
+}
+
+#note-list li.pinned-display:hover {
+	background: var(--bg-tertiary);
+}
+
+/* Drag and drop states */
+#note-list li[draggable="true"] {
+	cursor: grab;
+}
+
+#note-list li[draggable="true"]:active {
+	cursor: grabbing;
+}
+
+#note-list li.dragging {
+	opacity: 0.5;
+	cursor: grabbing;
+}
+
+#note-list li.drag-over-top {
+	box-shadow: inset 0 2px 0 var(--primary-color);
+}
+
+#note-list li.drag-over-bottom {
+	box-shadow: inset 0 -2px 0 var(--primary-color);
 }
 
 /* Simple Delete Button */

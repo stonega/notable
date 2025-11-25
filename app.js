@@ -199,6 +199,7 @@ document.addEventListener("DOMContentLoaded", () => {
 	let notes = [];
 	let activeNoteId = null;
 	let pinnedNoteId = null;
+	let draggedNoteId = null;
 	let isUpdatingFromStorage = false; // Flag to prevent infinite loops
 
 	// Convert EditorJS data to Markdown
@@ -478,22 +479,38 @@ document.addEventListener("DOMContentLoaded", () => {
 			return;
 		}
 
-		// Sort notes: pinned notes first, then by creation date (newest first)
-		const sortedNotes = [...notes].sort((a, b) => {
-			if (a.pinned && !b.pinned) return -1;
-			if (!a.pinned && b.pinned) return 1;
-			return new Date(b.createdAt) - new Date(a.createdAt);
-		});
+		const fragment = document.createDocumentFragment();
+		const pinnedNotes = notes.filter((note) => note.pinned);
+		const regularNotes = notes.filter((note) => !note.pinned);
+		const orderedNotes = [...pinnedNotes, ...regularNotes];
 
-		sortedNotes.forEach((note, index) => {
+		orderedNotes.forEach((note) => {
 			const li = document.createElement("li");
 			const noteTitle = getNoteTitle(note);
+			const isPinnedPreview = note.pinned && note.id !== activeNoteId;
 
-			li.className = note.id === activeNoteId ? "active" : "";
+			if (note.id === activeNoteId) {
+				li.classList.add("active");
+			}
+			if (note.pinned) {
+				li.classList.add("pinned");
+			}
+			if (isPinnedPreview) {
+				li.classList.add("pinned-display");
+				li.setAttribute("aria-disabled", "true");
+				li.tabIndex = -1;
+			} else {
+				li.setAttribute("aria-disabled", "false");
+				li.tabIndex = 0;
+			}
+
 			li.dataset.noteId = note.id;
+			li.dataset.pinned = note.pinned ? "true" : "false";
 			li.setAttribute("role", "listitem");
-			li.setAttribute("tabindex", "0");
-			li.setAttribute("aria-label", `Note: ${noteTitle}`);
+			li.setAttribute(
+				"aria-label",
+				isPinnedPreview ? `Pinned note: ${noteTitle}` : `Note: ${noteTitle}`,
+			);
 
 			// Create note title element
 			const titleElement = document.createElement("div");
@@ -506,9 +523,17 @@ document.addEventListener("DOMContentLoaded", () => {
 
 			// Create pin button
 			const pinBtn = document.createElement("button");
-			pinBtn.innerHTML = getPinIcon(note.pinned);
-			pinBtn.className = `pin-note ${note.pinned ? "pinned" : ""}`;
-			pinBtn.setAttribute("aria-label", note.pinned ? `Unpin note: ${noteTitle}` : `Pin note: ${noteTitle}`);
+			if (note.pinned && isPinnedPreview) {
+				pinBtn.textContent = "Unpin";
+				pinBtn.className = "pin-note pin-note-unpin pinned";
+			} else {
+				pinBtn.innerHTML = getPinIcon(note.pinned);
+				pinBtn.className = `pin-note ${note.pinned ? "pinned" : ""}`;
+			}
+			pinBtn.setAttribute(
+				"aria-label",
+				note.pinned ? `Unpin note: ${noteTitle}` : `Pin note: ${noteTitle}`,
+			);
 			pinBtn.addEventListener("click", (e) => {
 				e.stopPropagation();
 				togglePinNote(note.id);
@@ -530,22 +555,41 @@ document.addEventListener("DOMContentLoaded", () => {
 			li.appendChild(titleElement);
 			li.appendChild(actionsContainer);
 
-			// Add pinned class if note is pinned
-			if (note.pinned) {
-				li.classList.add("pinned");
+			if (!note.pinned) {
+				li.draggable = true;
+				li.setAttribute("aria-grabbed", "false");
+				li.addEventListener("dragstart", handleDragStart);
+				li.addEventListener("dragover", handleDragOver);
+				li.addEventListener("dragleave", handleDragLeave);
+				li.addEventListener("drop", handleDrop);
+				li.addEventListener("dragend", handleDragEnd);
+			} else {
+				li.draggable = false;
+				li.removeAttribute("aria-grabbed");
 			}
 
 			// Add click and keyboard event listeners
-			li.addEventListener("click", () => switchNote(note.id));
-			li.addEventListener("keydown", (e) => {
-				if (e.key === "Enter" || e.key === " ") {
-					e.preventDefault();
+			li.addEventListener("click", (event) => {
+				if (note.pinned && note.id !== activeNoteId) {
+					event.preventDefault();
+					return;
+				}
+				switchNote(note.id);
+			});
+			li.addEventListener("keydown", (event) => {
+				if (event.key === "Enter" || event.key === " ") {
+					event.preventDefault();
+					if (note.pinned && note.id !== activeNoteId) {
+						return;
+					}
 					switchNote(note.id);
 				}
 			});
 
-			noteList.appendChild(li);
+			fragment.appendChild(li);
 		});
+
+		noteList.appendChild(fragment);
 	}
 
 	function getNoteTitle(note) {
@@ -881,6 +925,132 @@ document.addEventListener("DOMContentLoaded", () => {
 		}
 	}
 
+	function clearDragIndicators() {
+		noteList
+			.querySelectorAll(".drag-over-top, .drag-over-bottom")
+			.forEach((item) => item.classList.remove("drag-over-top", "drag-over-bottom"));
+	}
+
+	function resetDragState() {
+		if (draggedNoteId) {
+			const draggedItem = noteList.querySelector(`[data-note-id="${draggedNoteId}"]`);
+			if (draggedItem) {
+				draggedItem.classList.remove("dragging");
+				draggedItem.setAttribute("aria-grabbed", "false");
+			}
+		}
+		draggedNoteId = null;
+		clearDragIndicators();
+	}
+
+	function handleDragStart(event) {
+		const item = event.currentTarget;
+		if (!item) return;
+		draggedNoteId = item.dataset.noteId;
+		item.classList.add("dragging");
+		item.setAttribute("aria-grabbed", "true");
+		if (event.dataTransfer) {
+			event.dataTransfer.effectAllowed = "move";
+			event.dataTransfer.setData("text/plain", draggedNoteId);
+		}
+	}
+
+	function handleDragOver(event) {
+		const target = event.currentTarget;
+		if (!draggedNoteId || !target || target.dataset.noteId === draggedNoteId) {
+			return;
+		}
+		event.preventDefault();
+		clearDragIndicators();
+		const rect = target.getBoundingClientRect();
+		const isAfter = event.clientY - rect.top > rect.height / 2;
+		target.classList.add(isAfter ? "drag-over-bottom" : "drag-over-top");
+	}
+
+	function handleDragLeave(event) {
+		const target = event.currentTarget;
+		if (!target) return;
+		target.classList.remove("drag-over-top", "drag-over-bottom");
+	}
+
+	async function handleDrop(event) {
+		const target = event.currentTarget;
+		if (!draggedNoteId || !target) {
+			return;
+		}
+		event.preventDefault();
+		event.stopPropagation();
+
+		if (target.dataset.noteId === draggedNoteId) {
+			resetDragState();
+			return;
+		}
+
+		const rect = target.getBoundingClientRect();
+		const placeAfter = event.clientY - rect.top > rect.height / 2;
+		await reorderNotes(draggedNoteId, target.dataset.noteId, placeAfter);
+		resetDragState();
+	}
+
+	function handleDragEnd() {
+		resetDragState();
+	}
+
+	function handleListDragOver(event) {
+		if (!draggedNoteId) return;
+		const target = event.target.closest("li[data-note-id]");
+		if (!target) {
+			event.preventDefault();
+			clearDragIndicators();
+		}
+	}
+
+	async function handleListDrop(event) {
+		if (!draggedNoteId) return;
+		event.preventDefault();
+		const target = event.target.closest("li[data-note-id]");
+		if (target) {
+			return;
+		}
+		await reorderNotes(draggedNoteId);
+		resetDragState();
+	}
+
+	async function reorderNotes(draggedId, targetId = null, placeAfter = false) {
+		if (!draggedId || draggedId === targetId) {
+			return;
+		}
+
+		const draggedIndex = notes.findIndex((note) => note.id === draggedId);
+		if (draggedIndex === -1 || notes[draggedIndex].pinned) {
+			return;
+		}
+
+		isUpdatingFromStorage = true;
+		try {
+			const [draggedNote] = notes.splice(draggedIndex, 1);
+			let insertIndex = notes.length;
+
+			if (targetId) {
+				insertIndex = notes.findIndex((note) => note.id === targetId);
+				if (insertIndex === -1) {
+					insertIndex = notes.length;
+				}
+				if (placeAfter) {
+					insertIndex += 1;
+				}
+			}
+
+			notes.splice(insertIndex, 0, draggedNote);
+			await chrome.storage.local.set({ notes });
+		} catch (error) {
+			console.error("Error reordering notes:", error);
+		} finally {
+			isUpdatingFromStorage = false;
+			renderNoteList();
+		}
+	}
+
 	// Enhanced keyboard shortcuts
 	document.addEventListener("keydown", (e) => {
 		// Ctrl/Cmd + N for new note
@@ -948,6 +1118,9 @@ document.addEventListener("DOMContentLoaded", () => {
 		}
 	});
 
+	noteList.addEventListener("dragover", handleListDragOver);
+	noteList.addEventListener("drop", handleListDrop);
+
 	// Initialize action bar icons
 	copyMarkdownBtn.innerHTML = getCopyIcon();
 	copyMarkdownPinnedBtn.innerHTML = getCopyIcon();
@@ -960,10 +1133,17 @@ document.addEventListener("DOMContentLoaded", () => {
 	noteList.addEventListener("keydown", (e) => {
 		if (e.key === "ArrowUp" || e.key === "ArrowDown") {
 			e.preventDefault();
-			const items = Array.from(noteList.querySelectorAll("li[data-note-id]"));
+			const items = Array.from(
+				noteList.querySelectorAll("li[data-note-id]"),
+			).filter((item) => item.getAttribute("aria-disabled") !== "true");
+
 			const currentIndex = items.findIndex((item) =>
 				item.classList.contains("active"),
 			);
+			if (currentIndex === -1 || items.length === 0) {
+				return;
+			}
+
 			let newIndex;
 
 			if (e.key === "ArrowUp") {
